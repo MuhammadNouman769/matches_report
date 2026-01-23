@@ -1,10 +1,11 @@
-asgiref==3.11.0
+# Django Core
 Django==5.2.10
-djangorestframework==3.16.1
-drf-yasg==1.21.14
-inflection==0.5.1
-packaging==26.0
-pytz==2025.2
-PyYAML==6.0.3
+asgiref==3.11.0
 sqlparse==0.5.5
-uritemplate==4.2.0
+pytz==2025.2
+
+# Django REST Framework
+djangorestframework==3.16.1
+
+# Additional utilities
+python-dotenv==1.2.1

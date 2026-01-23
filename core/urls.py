@@ -16,7 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from apps.stories import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.index_view, name='index'),
+    path('author/', views.author_view, name='author'),
+    path('blog-details/', views.blog_details_view, name='blog-details'),
+    path('column-layout-grid/', views.column_layout_view, name='column-layout-grid'),
+    path('coming-soon/', views.coming_soon_view, name='coming-soon'),
+    path('error/', views.error_view, name='error'),
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()
