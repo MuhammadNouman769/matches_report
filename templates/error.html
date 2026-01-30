@@ -5,26 +5,7 @@
 
 {% block content %}
 <!-- Start Breadcrumb Area -->
-    <!-- rts breadcrumba area start -->
-    <div class="eblog-breadcrumb-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- bread crumb inner wrapper -->
-                    <div class="breadcrumb-inner text-center">
-                        <div class="meta">
-                            <a href="#" class="prev">Home</a>
-                            <img src="{% static 'img/icon/chevron-right.svg' %}" alt="">
-                            <a href="#" class="last">Error 404</a>
-                        </div>
-                    </div>
-                    <!-- bread crumb inner wrapper end -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- rts breadcrumba area end -->
-    <!-- End Breadcrumb Area -->
+  
 
     <!-- Start Sign Up Area -->
     <section class="eblog-error-area tp-section-top-80">
@@ -32,12 +13,12 @@
             <div class="section-inner">
                 <div class="row justify-content-center">
                     <div class="col-lg-4 text-center">
-                        <div class="watermark">
+                        <div class="">
                             <h2>404</h2>
                         </div>
                         <h2 class="heading-title text-center">Page not found!</h2>
                         <p class="desc text-center">Sorry, the page you seems looking for, has been moved, redirected or removed permanently.</p>
-                        <a class="tp-btn btn-secondary" href="index.html">Go Back Home</a>
+                        <a class="tp-btn btn-secondary" href="{% url 'index'%}">Go Back Home</a>
                         <div class="error-bottom-text">
                             <p class="text-center">Why not try to search again? <a href="#">Search now</a></p>
                         </div>

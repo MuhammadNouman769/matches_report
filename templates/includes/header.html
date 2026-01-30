@@ -97,6 +97,32 @@
                 </div>
             </div>
         </div>
+          <!-- rts breadcrumba area start -->
+    <div class="eblog-breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- bread crumb inner wrapper -->
+                    <div class="breadcrumb-inner text-center">
+                        <div class="meta">
+                            <a href="{% url 'index'%}" class="prev">Home</a>
+                            <img src="{% static 'img/icon/chevron-right.svg' %}" alt="">
+                            <a href="{% url 'column-layout-grid'%}" class="next">All Stories</a>
+                            <img src="{% static 'img/icon/chevron-right.svg' %}" alt="">
+                            <a href="{% url 'blog-details'%}" class="last">Blog Details</a>
+                              <img src="{% static 'img/icon/chevron-right.svg' %}" alt="">
+                            <a href="{% url 'coming-soon'%}" class="last">Coming Soon</a>
+                            <img src="{% static 'img/icon/chevron-right.svg' %}" alt="">
+                            <a href="{% url 'error'%}" class="last">Errors</a>
+
+                        </div>
+                    </div>
+                    <!-- bread crumb inner wrapper end -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- rts breadcrumba area end -->
     </div>
     <!-- End Home-1 Menu & Site Logo & Social Media -->
 </header>
@@ -214,3 +240,6 @@
 </div>
 <!-- End Subscribe Popup Box -->
 <!-- End Header Area -->
+<!-- Start Breadcrumb Area -->
+  
+    <!-- End Breadcrumb Area -->
