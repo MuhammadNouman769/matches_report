@@ -40,6 +40,8 @@ INSTALLED_APPS = [
      # third-party apps
     'rest_framework',
     'phonenumber_field',
+    'ckeditor',
+    'ckeditor_uploader',
     # local apps
     'apps.stories',
     'apps.comments',
@@ -125,6 +127,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+
+import os
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Required for file uploads: specify a relative path within MEDIA_ROOT
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 # URL jo browser me use hoga
 STATIC_URL = '/static/'

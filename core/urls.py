@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from apps.stories import views
-
+from django.urls import path, include
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index_view, name='index'),
@@ -27,9 +28,9 @@ urlpatterns = [
     path('column-layout-grid/', views.column_layout_view, name='column-layout-grid'),
     path('coming-soon/', views.coming_soon_view, name='coming-soon'),
     path('error/', views.error_view, name='error'),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 # Serve static files in development
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-    urlpatterns += staticfiles_urlpatterns()

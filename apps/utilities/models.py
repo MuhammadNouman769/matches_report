@@ -5,7 +5,7 @@ import uuid
 
 class CoreManager(models.Model):
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True)
+        return super().get_queryset().filter(is_active=True) # type: ignore
     
 
 
@@ -17,12 +17,12 @@ class CoreModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
-    objects = CoreManager()
+    objects = CoreManager() # type: ignore
 
     class Meta:
         abstract = True
         
-    def __str__(self):
+    def __str__(self): # type: ignore
         return self.id
 
     def __repr__(self):

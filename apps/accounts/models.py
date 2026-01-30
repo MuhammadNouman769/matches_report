@@ -26,7 +26,7 @@ class Userprofile(CoreModel):
     bio = models.TextField(blank=True, help_text="brief description about the user")
     avatar = models.ImageField(upload_to='%y/%m/%d',null=True, blank=True)
 
-    phone = PhoneNumberField(region="PK")
+    phone = PhoneNumberField(region="PK") # type: ignore
     wetsite = models.URLField(blank=True)
 
     '''------- Editor Specific Fields --------'''
@@ -39,8 +39,8 @@ class Userprofile(CoreModel):
         verbose_name = 'User Profiles'
 
     ''' ----- STRING REPRESENTAION ------ '''    
-    def __str__(self):
-        return f"{self.user.username} - {self.get_user_type_display()}"
+    def __str__(self): # type: ignore
+        return f"{self.user.username} - {self.get_user_type_display()}" # type: ignore
     
     ''' ----- CUSTOM PROPERTIES ----- '''
     @property
