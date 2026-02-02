@@ -1,13 +1,37 @@
-# Python
-*.pyc
+# Python caches
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Django migrations (optional: ignore if you want to version them)
+# apps/*/migrations/
+# !apps/*/migrations/__init__.py
+
+# Environment / virtualenv
+venv/
+.env
+.env.*
+
+# Static files (collectstatic output) - ignore if you want to push only source
+/staticfiles/
+
+# PyCharm / VSCode configs
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Mac OS
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+*.pyc
 *.pyo
 *.pyd
-*.db
 
-# Virtual environment
-venv/
-ENV/
-env/
+# Ignore database files? (comment out if you want to push)
+# *.sqlite3
 
-# Django
+# Ignore media files? (comment out if you want to push)
+# media/

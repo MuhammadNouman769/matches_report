@@ -20,17 +20,18 @@ from django.conf import settings
 from apps.stories import views
 from django.urls import path, include
 from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index_view, name='index'),
     path('author/', views.author_view, name='author'),
     path('blog-details/', views.blog_details_view, name='blog-details'),
-    path('column-layout-grid/', views.column_layout_view, name='column-layout-grid'),
+    path('stories/', include('apps.stories.urls')),
     path('coming-soon/', views.coming_soon_view, name='coming-soon'),
     path('error/', views.error_view, name='error'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
-# Serve static files in development
+
 if settings.DEBUG:
-    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

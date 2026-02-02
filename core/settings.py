@@ -127,28 +127,28 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 import os
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ------------------
+# Static files
+# ------------------
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Required for file uploads: specify a relative path within MEDIA_ROOT
-CKEDITOR_UPLOAD_PATH = "uploads/"
-
-# URL jo browser me use hoga
-STATIC_URL = '/static/'
-
-# static files ka root (production me collectstatic ke liye)
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# extra folders jahan se Django static files search kare
+STATIC_ROOT = BASE_DIR / "staticfiles"   # collectstatic ke liye
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "static",  # development me search path
 ]
+
+# ------------------
+# Media files (uploaded images)
+# ------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"  # uploaded files store yahan
+
+# CKEditor uploads folder
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

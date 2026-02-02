@@ -5,18 +5,18 @@ from django.utils import timezone
 from django.urls import reverse
 from django.utils.text import slugify
 from apps.utilities.models import CoreModel
-from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor_uploader.fields import RichTextUploadingField # type: ignore
 
 
 
 """ ============= Story Model ============"""
-class Story(models.Model):
+class Story(CoreModel):
     '''Model for story/news field'''
 
     class StoryStatus(models.TextChoices):
         Draft = 'draft', 'Draft'
         REVIEW = 'review', 'Under Review'
-        PUBLISHED = 'published', 'Bublished'
+        PUBLISHED = 'published', 'published'
         REJECTED = 'rejected', 'Rejected'
         CANCEL = 'cancel', 'Cancel'
 
@@ -28,7 +28,7 @@ class Story(models.Model):
     image = models.ImageField(upload_to='stories/%Y/%m/%d', blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stories')
     status = models.CharField(max_length=10, choices=StoryStatus.choices,default=StoryStatus.Draft)
-    tags = models.ForeignKey("StoryTag", on_delete=models.CASCADE, related_name='story_tags') # type:ignore
+    tags = models.ManyToManyField("StoryTag", related_name='stories')
     summery = models.TextField(blank=True, help_text="Brief summery of story")
     published_at = models.DateTimeField(null=True, blank=True)
 
@@ -40,24 +40,61 @@ class Story(models.Model):
     views_count = models.PositiveIntegerField(default=0)
     likes_count = models.PositiveIntegerField(default=0)
     
-    # '''Metadata'''
-    # class Meta:
-    #     ordering = ['-created_at']
-    #     verbose_name_plural = 'stories'
-        
-    # def __str__(self): # type: ignore
-    #     self.title
-        
-        
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = 'Stories'
+    
+    
+    
+    
+    def __str__(self):
+        return self.title
+    
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)    
+            self.slug = slugify(self.title)
         if self.status == 'published' and not self.published_at:
-            self.published_at = self.timezone.now() # type: ignore
-        super().save(*args, **kwargs)    
-
-
+            self.published_at = timezone.now()
+        super().save(*args, **kwargs)
     
+
+    def can_edit(self, user):
+        if not user.is_authenticated:
+            return False
+        if hasattr(user, "profile") and getattr(user.profile, "is_chief_editor", False):
+            return True
+        return self.author == user and getattr(user.profile, "is_editor", False)
+    
+    def can_review(self, user):
+        return user.is_authenticated and hasattr(user, "profile") and getattr(user.profile, "is_chief_editor", False)
+    
+    def can_publish(self, user):
+        return user.is_authenticated and hasattr(user, "profile") and getattr(user.profile, "is_chief_editor", False)
+    
+    
+    def can_edit_banner(self, user):
+        """Check if user can edit the story_banner field"""
+        return user.is_authenticated and hasattr (user, "profile") and user.profile.is_chief_editor
+    
+    def can_view(self, user):
+        if self.status == 'published':
+            return True
+        if not user.is_authenticated:
+            return False
+        if hasattr(user, "profile") and getattr(user.profile, "is_chief_editor", False):
+            return True
+        return self.author == user
+    
+    def get_absolute_url(self):
+        return reverse('story:blog_details', kwargs={'slug': self.slug})
+    
+    @property
+    def is_published(self):
+        return self.status == 'published'
+    
+    @property
+    def tag_list(self):
+        return self.tags.all()
 
 """ ============ Story Chapter =========== """
 class StoryChapter(CoreModel):
@@ -70,16 +107,28 @@ class StoryChapter(CoreModel):
     order = models.PositiveBigIntegerField(default=0)
     
     
-    
-    
-    
+    class Meta:
+        ordering = ['order', 'created_at']
+        constraints = [
+            models.UniqueConstraint(fields=['story','order'], name='unique_story_order')
+        ]
+        
+    def __str__(self):
+        return f'{self.story.title} - chapter {self.order}: {self.title}'
     
     
 """ ============== Story Like ============== """    
 class StoryLike(CoreModel):
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='story_like')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['story', 'user'], name='unique_story_user_like')
+        ]
+
+    def __str__(self):
+        return f'{self.user.username} like {self.story.title}'
 
 """ ================ Story View ================ """
 class StoryView(CoreModel):
@@ -87,56 +136,27 @@ class StoryView(CoreModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
     id_adress = models.GenericIPAddressField(null=True,blank=True)
     
-    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'View of {self.story.title} at {self.created_at}'
+
+
       
 """ ============== Story Tags ============= """  
 class StoryTag(CoreModel):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True) 
     
-    class Meta: # pyright: ignore[reportIncompatibleVariableOverride]
+    class Meta:
         ordering = ['name']
         verbose_name_plural = 'Story Tags'
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        
-        super().save( *args, **kwargs) 
-        
-    def __str__(self): # type: ignore
-        return self.name       
-       
-    '''
-    If the user is not logged
-    in editing is not allowed.
-    '''
-    def can_edit(self, user):
-        if not user.is_authenticated:
-            return False
-        '''
-        If the user profile exists and the user
-        is chief editor then fully access to edit.
-        '''
-        if hasattr(user, "profile") and getattr(user.profile ,"is_chief_editor", False):
-            return True
-        '''
-            The author of the story must be the user and the user 
-        must be the editor, then editing will be allowed, otherwise not.
-        '''
-        if self.author == user and getattr(user.profile, "is_editor",False)    # type: ignore
-           
-           
-    def can_review(self, user):
-        if user.is_authenticated and  hasattr(user, "profile") and getattr(user.profile, "is_chief_editor", False)   # type: ignore
-            
-    def can_publish(self, user):
-        if user.is_authenticated and hasattr(user, "profile") and getattr(user.profile, "is_chief_editor"False)       # type: ignore
-        
-    def can_view(self, user):
-        if self.status == 'published': # type: ignore
-            return True
-        if not user.is_authenticated:
-            return False
-                  
-               
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
