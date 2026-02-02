@@ -33,17 +33,31 @@ class Story(models.Model):
     published_at = models.DateTimeField(null=True, blank=True)
 
     '''Review work flow'''
-    reviewed_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,related_name='rewieved_stories'
+    reviewed_by = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True,related_name='rewieved_stories'
     )
-    reviewed_at = models.TextField(blank=True, help_text="Review comments from chief editor")
+    reviewed_at = models.DateTimeField(blank=True, null=True)
     review_notes = models.TextField(blank=True, help_text="Review comments from chief editor")
+    views_count = models.PositiveIntegerField(default=0)
+    likes_count = models.PositiveIntegerField(default=0)
     
+    # '''Metadata'''
+    # class Meta:
+    #     ordering = ['-created_at']
+    #     verbose_name_plural = 'stories'
+        
+    # def __str__(self): # type: ignore
+    #     self.title
+        
+        
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)    
+        if self.status == 'published' and not self.published_at:
+            self.published_at = self.timezone.now() # type: ignore
+        super().save(*args, **kwargs)    
 
-    ''' '''
+
+    
 
 """ ============ Story Chapter =========== """
 class StoryChapter(CoreModel):
@@ -92,4 +106,37 @@ class StoryTag(CoreModel):
         
     def __str__(self): # type: ignore
         return self.name       
+       
+    '''
+    If the user is not logged
+    in editing is not allowed.
+    '''
+    def can_edit(self, user):
+        if not user.is_authenticated:
+            return False
+        '''
+        If the user profile exists and the user
+        is chief editor then fully access to edit.
+        '''
+        if hasattr(user, "profile") and getattr(user.profile ,"is_chief_editor", False):
+            return True
+        '''
+            The author of the story must be the user and the user 
+        must be the editor, then editing will be allowed, otherwise not.
+        '''
+        if self.author == user and getattr(user.profile, "is_editor",False)    # type: ignore
            
+           
+    def can_review(self, user):
+        if user.is_authenticated and  hasattr(user, "profile") and getattr(user.profile, "is_chief_editor", False)   # type: ignore
+            
+    def can_publish(self, user):
+        if user.is_authenticated and hasattr(user, "profile") and getattr(user.profile, "is_chief_editor"False)       # type: ignore
+        
+    def can_view(self, user):
+        if self.status == 'published': # type: ignore
+            return True
+        if not user.is_authenticated:
+            return False
+                  
+               
