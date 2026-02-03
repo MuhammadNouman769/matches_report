@@ -7640,6 +7640,7 @@ audio,
 canvas,
 video {
   display: inline-block;
+  border-radius: 17px;
 }
 
 audio:not([controls]) {

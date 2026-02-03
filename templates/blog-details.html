@@ -60,6 +60,9 @@
     height: 100%;
     
 }
+.video{
+    border-radius:5px;
+}
 
 </style>    
     <!-- Start Feature Post Area -->
@@ -160,8 +163,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <h2 class="story-title">{{ story.title|truncatewords:11 }}</h2>
-                                
+                                <h2 class="story-title">{{ story.title|truncatewords:11 }}</h2>                
                                 <!-- Tags Section - Added after heading -->
                                 <div class="blog-tags-section mb--20">
                                     <div class="tags-wrapper">
@@ -171,7 +173,7 @@
                                             <a href="#" class="tag-item">{{ tag.name }}</a>
                                             {% empty %}
                                               <span class="tag-item">Uncategorized</span>
-                            {% endfor %}
+                                     {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -196,7 +198,6 @@
                                 {% endwith %}
                                 
                                   {% for chapter in story.chapters.all %}
-                                  
                                 <div class="image-area mb--30">
                                      {% if chapter.image %}
                                            <div class="chapter-image">
@@ -206,11 +207,19 @@
                                             <img src="{% static 'default.jpg' %}" alt="">
                                         {% endif %} 
                                     </div>
-                               
-                                   
                                  <h2 class="chapter-title">{{ chapter.title|truncatewords:20 }}</h2>
-
-                                <p class="desc last">{{chapter.content|truncatechars_html:1000|safe }}</p>
+                                 <p class="desc">
+                                    {{ chapter.content|truncatechars_html:500|safe }}
+                                </p>
+                                {% if chapter.video %}
+                                    <video width="100%" height="auto" controls>
+                                        <source src="{{ chapter.video.url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% endif %}
+                                  <p class="desc last">
+                                    {{ chapter.content|slice:"500:"|safe }}
+                                </p>
                                     {% endfor %}
                                 <div class="bottom-area">
                                     <div class="blog-actions">
@@ -269,7 +278,7 @@
                                     </div>
                                     <div class="author-inner d-flex align-items-center mt--70">
                                         <div class="image-area">
-                                                    {% if story.author.profile.avatar %}
+                                                  
                                             <img src="{% static 'img/banner/author-2.jpg' %}" width="307" alt="">
                                         </div>
                                         <div class="content-area">
