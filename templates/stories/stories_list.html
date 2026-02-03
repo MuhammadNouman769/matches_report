@@ -34,6 +34,7 @@
     object-position: center;
     display: block;
 }
+
 /* content */
 .story-card .content {
     padding: 16px;
@@ -48,13 +49,32 @@
 
 .story-card .tag {
     display: inline-block;
+    padding: 2px 9px;
+    font-size: 10px;
+    color: #eeeeee;
+    border: 2px solid #083b19e8;
+    background-color: #083b19e8;
+    font-weight: 600;
+    border-radius: 42px;
+    white-space: nowrap;   /* text break na ho */
+}
+
+.tag:hover {
+    display: inline-block;
     padding: 2px 6px;
     font-size: 10px;
-    color: #030303;
-    background-color: #cfc3c3cc;
-    font-weight: 600;
-    border-radius: 10px;
-    white-space: nowrap;   /* text break na ho */
+    color: #083b19e8;
+    background-color: #fffffff1;
+    font-weight: 500;
+    border-radius: 42px;
+    white-space: nowrap; 
+}
+
+.story-card .bolt{
+    font-weight: 400;
+    font-size:15px;
+    margin-left: -13px;
+    color:black;
 }
 
 .story-card h4 {
@@ -66,17 +86,44 @@
 .story-card h4 a {
     text-decoration: none;
     color: inherit;
+    font-weight: 700;
 }
 
 .story-card h4 a:hover {
-    color: #2e4581;
+    color: #083b19e8;
+}
+
+.story-card .desc {
+    font-size: 14px;
+    line-height: 1.5;
+    
 }
 
 .story-card .meta {
     font-size: 13px;
-    color: #777;
+    color: #000000;
+}
+
+.button-area {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.tp-btn {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #083b19e8;
+    color: #fff;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.tp-btn:hover {
+    background-color: #055a13;
 }
 </style>
+
 {% if query %}
 <section class="search-topic-heading">
     <div class="container">
@@ -95,6 +142,7 @@
     </div>
 </section>
 {% endif %}
+
 <!-- Start Feature Post Area -->
 <section class="eblog-featured-post-area area-2 tp-section-gap">
     <div class="container">
@@ -103,6 +151,7 @@
                 {% for story in stories %}
                 <div class="col-xl-3 col-lg-4 col-md-6">
                     <div class="story-card">
+                        <!-- Story Image -->
                         <div class="image-box">
                             {% if story.image %}
                                 <img src="{{ story.image.url }}" alt="{{ story.title }}">
@@ -110,24 +159,45 @@
                                 <img src="{% static 'img/default_story.jpg' %}" alt="default image">
                             {% endif %}
                         </div>
+
+                        <!-- Story Content -->
                         <div class="content">
+                            <!-- Tags -->
                             <div class="tags">
-                            {% for tag in story.tags.all %}
-                                <span class="tag">{{ tag.name }}</span>
-                            {% empty %}
-                                <span class="tag">Uncategorized</span>
-                            {% endfor %}
-                        </div>
-                            <h4><a href="#">
-                                    {{ story.title|truncatechars:45 }}
-                            </a></h4>
+                                <span class="bolt">Tags:</span>
+                                {% for tag in story.tags.all|slice:":3" %}
+                                    <span class="tag">{{ tag.name }}</span>
+                                {% empty %}
+                                    <span class="tag">Uncategorized</span>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Story Title -->
+                            <h4>
+                                <a href="{% url 'blog_detail' slug=story.slug %}">
+                                    {% with story.title.split as words %}
+                                        {% if words|length > 0 %}
+                                            {{ words.0|upper }} 
+                                            {% for word in words|slice:"1:8" %}
+                                                {{ word }} 
+                                            {% endfor %}
+                                            {% if words|length > 8 %}...{% endif %}
+                                        {% endif %}
+                                    {% endwith %}
+                                </a>
+                            </h4>
+
+                            <!-- Story Content / Description -->
+                            <p class="desc">{{ story.content|truncatechars_html:120|safe }}</p>
+
+                            <!-- Meta -->
                             <div class="meta">
                                 By {% if story.author.first_name %}
                                     {{ story.author.first_name }} {{ story.author.last_name }}
                                 {% else %}
                                     {{ story.author.username }}
                                 {% endif %}
-                            {% if story.published_at %}
+                                {% if story.published_at %}
                                     • {{ story.published_at|date:"d M, Y" }}
                                 {% endif %}
                             </div>
@@ -135,6 +205,8 @@
                     </div>
                 </div>
                 {% endfor %}
+
+                <!-- Load More Button -->
                 <div class="col-lg-12">
                     <div class="button-area">
                         <a href="#" class="tp-btn btn-secondary m-auto">Load More</a>

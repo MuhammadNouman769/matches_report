@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index_view, name='index'),
     path('author/', views.author_view, name='author'),
-    path('blog-details/', views.blog_details_view, name='blog-details'),
+
     path('stories/', include('apps.stories.urls')),
     path('coming-soon/', views.coming_soon_view, name='coming-soon'),
     path('error/', views.error_view, name='error'),

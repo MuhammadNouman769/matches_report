@@ -9337,7 +9337,13 @@ body {
 }
 
 p {
+  font-size: 13px;
+  text-align: justify;
+  color: black;
+  margin-bottom: 7px;
+  line-height: normal;
   font-size: 16px;
+  text-align: justify;
   line-height: 26px;
 }
 
@@ -17786,6 +17792,7 @@ body.sal-disabled [data-sal|=flip] {
 }
 .eblog-hero-banner .desc {
   margin-bottom: 10px;
+  text-align: justify;
   color: var(--color-heading-1);
 }
 .eblog-hero-banner .desc.last {

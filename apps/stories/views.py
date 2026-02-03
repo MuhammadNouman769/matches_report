@@ -77,12 +77,15 @@ def story_list(request, tag_slug=None):
 
 
 
+def blog_detail(request, slug):
+    '''display singal story published with related content'''
+    
+    story = get_object_or_404(Story, slug=slug)
 
-
-
-
-
-
+    context = {
+        'story':story
+    }
+    return render(request, 'blog-details.html', context=context)
 
 
 
@@ -104,7 +107,7 @@ def author_view(request):
     return render(request, 'author.html')
 
 
-def blog_details_view(request):
+def blog_details_vie(request):
     """View for the blog details page"""
     return render(request, 'blog-details.html')
 

@@ -26,10 +26,12 @@ class Story(CoreModel):
     slug = models.SlugField(unique=True, blank=True)
     content = RichTextUploadingField(max_length=1000)
     image = models.ImageField(upload_to='stories/%Y/%m/%d', blank=True, null=True)
+    summery_image = models.ImageField(upload_to='summries/%Y/%m/%d', blank=True, null=True)
+    
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stories')
     status = models.CharField(max_length=10, choices=StoryStatus.choices,default=StoryStatus.Draft)
     tags = models.ManyToManyField("StoryTag", related_name='stories')
-    summery = models.TextField(blank=True, help_text="Brief summery of story")
+    summery = models.TextField(max_length=1000, blank=True, help_text="Brief summery of story")
     published_at = models.DateTimeField(null=True, blank=True)
 
     '''Review work flow'''
