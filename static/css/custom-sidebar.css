@@ -132,6 +132,8 @@
     align-items: center;
     gap: 15px;
     flex-wrap: wrap;
+    margin-top: -51px;
+    margin-bottom: 28px;
 }
 
 .blog-tags-section .tags-label {

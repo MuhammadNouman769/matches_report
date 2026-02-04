@@ -163,7 +163,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <h2 class="story-title">{{ story.title|truncatewords:11 }}</h2>                
+                                            
                                 <!-- Tags Section - Added after heading -->
                                 <div class="blog-tags-section mb--20">
                                     <div class="tags-wrapper">
@@ -177,6 +177,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <h2 class="story-title">{{ story.title|truncatewords:11 }}</h2>   
                                 <p class="desc">{{ story.content|truncatechars_html:1000|safe }}</p>
                                 <div class="row g-5 mt--10 mb--10">
                                     <div class="col-lg-5">

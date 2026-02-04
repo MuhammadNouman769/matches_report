@@ -1,29 +1,46 @@
-{% comment %} Single Story Card Partial {% endcomment %}
-<div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+{% load static %}
+
+{% for story in stories %}
+<div class="col-xl-3 col-lg-4 col-md-6">
     <div class="story-card">
         <div class="image-box">
             {% if story.image %}
+            <a href="{% url 'blog_detail' slug=story.slug %}">
                 <img src="{{ story.image.url }}" alt="{{ story.title }}">
             {% else %}
-                <img src="{% static 'img/default_story.jpg' %}" alt="default image">
+                <img src="{% static 'img/default_story.jpg' %}">
+            </a>
             {% endif %}
         </div>
         <div class="content">
-            <div class="tag">
-                {% if story.tags %}
-                    {{ story.tags.name }}
+            <div class="tags">
+                <span class="bolt">Tags:</span>
+
+                {% for tag in story.tags.all|slice:":3" %}
+                    <span class="tag">{{ tag.name }}</span>
+                {% empty %}
+                    <span class="tag">Uncategorized</span>
+                {% endfor %}
+            </div>
+          <h4>
+            <a href="{% url 'blog_detail' slug=story.slug %}">
+                {{ story.title|striptags|truncatewords:12 }}
+            </a>
+        </h4>
+            <div class="meta">
+                By
+                {% if story.author.first_name %}
+                    {{ story.author.first_name }} {{ story.author.last_name }}
                 {% else %}
-                    Uncategorized
+                    {{ story.author.username }}
+                {% endif %}
+
+                {% if story.published_at %}
+                    - {{ story.published_at|date:"d M, Y" }}
                 {% endif %}
             </div>
-            <h4><a href="#">{{ story.title|truncatechars:55 }}</a></h4>
-            <div class="meta">By {% if story.author.first_name %}
-                                            {{ story.author.first_name }} {{ story.author.last_name }}
-                                        {% else %}
-                                            {{ story.author.username }}
-                                        {% endif %}
-                 {{ story.author.username }} 
-                 • {{ story.published_at|date:"d M, Y" }}</div>
+
         </div>
     </div>
 </div>
+{% endfor %}

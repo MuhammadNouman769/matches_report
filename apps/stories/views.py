@@ -8,9 +8,12 @@ from django.template.loader import render_to_string
 
 def story_list(request, tag_slug=None):
     ''' display list stories with published '''
-    stories = Story.objects.filter(status='published',).select_related('author')
+    stories = Story.objects.filter(
+        status='published'
+    ).select_related('author').prefetch_related('tags')
 
     query = request.GET.get('q')
+
     if query:
         stories = stories.filter(
             Q(title__icontains=query) |
@@ -22,59 +25,29 @@ def story_list(request, tag_slug=None):
         ).distinct()
 
     tag = None
-    if tag_slug: 
-        tag = get_object_or_404(StoryTag, slug=tag_slug) 
+    if tag_slug:
+        tag = get_object_or_404(StoryTag, slug=tag_slug)
         stories = stories.filter(tags=tag)
 
-    stories = stories.distinct()   
-
-    '''pagination'''
-    paginator = Paginator(stories, 12)
-    page_number = request.GET.get('page', 1)
+    paginator = Paginator(stories, 8)
+    page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # If AJAX: render only the partial with story cards (no header/footer/breadcrumb)
+    # AJAX LOAD MORE
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        html = render_to_string(
+        return render(
+            request,
             'stories/partials/story_cards.html',
-            {'page_obj': page_obj, 'tag': tag},
-            request=request
+            {'stories': page_obj}
         )
-        # build next_page_url (preserve filters)
-        next_page_url = None
-        if page_obj.has_next():
-            params = request.GET.copy()
-            params['page'] = page_obj.next_page_number()
-            next_page_url = f"{request.path}?{params.urlencode()}"
 
-        return JsonResponse({
-            'html': html,
-            'has_next': page_obj.has_next(),
-            'next_page': page_obj.next_page_number() if page_obj.has_next() else None,
-            'next_page_url': next_page_url,
-        })
-
-    # Normal full page render (header/footer/breadcrumb present)
-    next_page_url = None
-    if page_obj.has_next():
-        params = request.GET.copy()
-        params['page'] = page_obj.next_page_number()
-        next_page_url = f"{request.path}?{params.urlencode()}"
-
-    
-    context = {
+    return render(request, 'stories/stories_list.html', {
         'page_obj': page_obj,
-        'stories': stories,
+        'stories': page_obj,
         'tag': tag,
         'query': query,
-        'results_count': stories.count(),
-         'next_page_url': next_page_url,
-        'ajax': False,
-    }
-
-
-    return render(request, 'stories/stories_list.html', context=context)
-
+        'results_count': stories.count()
+    })
 
 
 def blog_detail(request, slug):
